@@ -35,7 +35,7 @@ class Page:
                 raise Exception("Not logged into Google")
 
             res = svg_pattern.findall(response.text)
-            yield map(lambda s: s.encode().decode("unicode_escape"), res)
+            yield map(lambda s: s.replace("\\/", "/").encode().decode("unicode_escape"), res)
 
     @property
     def url(self) -> str:
