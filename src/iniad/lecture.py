@@ -29,12 +29,12 @@ class Lecture:
             prefix = page_el.select_one("a")["href"]
             if prefix == "#":
                 url = response.url
-                prefix = re.search(r"/courses/\d{4}/\w{2}\d{3}/\d+/.+", url).group()
+                prefix = re.search(r"/courses/\d{4}/\w{2}\d{3}/.+/.+", url).group()
             yield Page(lecture, prefix, self.session)
 
     def page(self, url: str) -> Page:
         # courses/2022/IE116/01/slide <- この形式が含まれてればOK
-        prefix = re.search(r"courses/\d{4}/\w{2}\d{3}/\d+/.+", url).group()
+        prefix = re.search(r"courses/\d{4}/\w{2}\d{3}/.+/.+", url).group()
         if prefix is None:
             raise ValueError("Invalid URL")
         prefix = "/" + prefix

@@ -41,7 +41,7 @@ class Course:
 
     def lecture(self, url: str) -> Lecture:
         # courses/2022/IE101/1 <- この形式が含まれてればOK
-        prefix = re.search(r"courses/\d{4}/\w{2}\d{3}/\d+", url).group()
+        prefix = re.search(r"courses/\d{4}/\w{2}\d{3}/.+", url).group()
         if prefix is None:
             raise ValueError("Invalid URL")
         prefix = "/" + prefix
