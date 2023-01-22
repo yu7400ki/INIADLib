@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from requests import Session
 
 from iniad.lecture import Lecture
+from iniad.url import MoocsURL
 
 
 @dataclass
@@ -40,11 +41,10 @@ class Course:
                 yield Lecture(course, group, name, prefix, session)
 
     def lecture(self, url: str) -> Lecture:
-        # courses/2022/IE101/1 <- この形式が含まれてればOK
-        prefix = re.search(r"courses/\d{4}/\w{2}\d{3}/.+", url).group()
-        if prefix is None:
+        u = MoocsURL(url)
+        if u.year is None or u.course is None or u.lecture is None:
             raise ValueError("Invalid URL")
-        prefix = "/" + prefix
+        prefix = "/courses/" + u.year + "/" + u.course + "/" + u.lecture
         url = self.path + prefix
         response = self.session.get(url)
         if url + "/" not in response.url:

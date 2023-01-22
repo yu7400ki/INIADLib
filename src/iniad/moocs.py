@@ -8,6 +8,7 @@ from iniad.course import Course
 from iniad.iniad import Iniad
 from iniad.lecture import Lecture
 from iniad.page import Page
+from iniad.url import MoocsURL
 
 
 @dataclass
@@ -29,11 +30,10 @@ class Moocs(Iniad):
             yield Course(name, prefix, self.session)
 
     def course(self, url: str) -> Course:
-        # courses/2022/IE101 <- この形式が含まれてればOK
-        prefix = re.search(r"courses/\d{4}/\w{2}\d{3}", url).group()
-        if prefix is None:
+        u = MoocsURL(url)
+        if u.year is None or u.course is None:
             raise ValueError("Invalid URL")
-        prefix = "/" + prefix
+        prefix = "/courses/" + u.year + "/" + u.course
         url = self.path + prefix
         response = self.session.get(url)
         if response.url != url:
