@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "iniad"
-version = "0.0.2"
+version = "0.0.1"
 description = "INIAD関連のなんか"
 license = "MIT"
 authors = ["yu7400ki <yu7400ki@gmail.com>"]
