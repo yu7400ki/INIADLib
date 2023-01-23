@@ -17,5 +17,5 @@ INIADとかMoocsとかのコードを書くかも
 Python = ^3.11
 
 ```
-$ pip install git+https://github.com/yu7400ki/INIADLib.git@v0.0.1
+$ pip install git+https://github.com/yu7400ki/INIADLib.git@v0.0.2
 ```
