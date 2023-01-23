@@ -5,6 +5,7 @@ from typing import Iterator
 from bs4 import BeautifulSoup
 from requests import Session
 
+slide_pattern = re.compile(r"^https?://docs.google.com/presentation/d/.*?/embed\?")
 svg_pattern = re.compile(r"\\x3csvg.*?\\x3c\\/svg\\x3e", re.DOTALL)
 
 
@@ -27,7 +28,7 @@ class Page:
         bookmarker = h2.select_one("div.pull-right")
         bookmarker.decompose()
         self.name = h2.text
-        self.slides = [slide["src"] for slide in soup.select("iframe")]
+        self.slides = [slide["src"] for slide in soup.select("iframe") if slide_pattern.match(slide["src"])]
         problem = list(soup.select("div.problem-container"))
         self.has_assignment = len(problem) > 0
 
