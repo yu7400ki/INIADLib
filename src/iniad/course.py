@@ -1,4 +1,3 @@
-import re
 from dataclasses import dataclass
 from typing import Iterator
 
@@ -42,9 +41,7 @@ class Course:
 
     def lecture(self, url: str) -> Lecture:
         u = MoocsURL(url)
-        if u.year is None or u.course is None or u.lecture is None:
-            raise ValueError("Invalid URL")
-        prefix = "/courses/" + u.year + "/" + u.course + "/" + u.lecture
+        prefix = u.prefix("lecture")
         url = self.path + prefix
         response = self.session.get(url)
         if url + "/" not in response.url:
@@ -57,11 +54,6 @@ class Course:
         name = breadcrumb[3].text
         session = self.session
         return Lecture(course, group, name, prefix, session)
-
-    def reload(self) -> None:
-        response = self.session.get(self.url)
-        soup = BeautifulSoup(response.text, "html.parser")
-        self.name = soup.select_one("h1").text
 
     @property
     def url(self) -> str:

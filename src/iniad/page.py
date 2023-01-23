@@ -10,6 +10,8 @@ svg_pattern = re.compile(r"\\x3csvg.*?\\x3c\\/svg\\x3e", re.DOTALL)
 
 @dataclass
 class Page:
+    course: str
+    group: str
     lecture: str
     # name: str
     # slides: list[str]
@@ -21,7 +23,10 @@ class Page:
         self.path = "https://moocs.iniad.org"
         response = self.session.get(self.url)
         soup = BeautifulSoup(response.text, "html.parser")
-        self.name = soup.select_one("h2").text
+        h2 = soup.select_one("h2")
+        bookmarker = h2.select_one("div.pull-right")
+        bookmarker.decompose()
+        self.name = h2.text
         self.slides = [slide["src"] for slide in soup.select("iframe")]
         problem = list(soup.select("div.problem-container"))
         self.has_assignment = len(problem) > 0

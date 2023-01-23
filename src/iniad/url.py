@@ -27,3 +27,21 @@ class MoocsURL:
         self.course = split[1]
         self.lecture = split[2]
         self.page = split[3]
+
+    def prefix(self, path: str) -> str:
+        match path:
+            case "year":
+                paths = ["", "courses", self.year]
+            case "course":
+                paths = ["", "courses", self.year, self.course]
+            case "lecture":
+                paths = ["", "courses", self.year, self.course, self.lecture]
+            case "page":
+                paths = ["", "courses", self.year, self.course, self.lecture, self.page]
+            case _:
+                raise ValueError("Invalid path")
+
+        if None in paths:
+            raise ValueError("Invalid path")
+
+        return "/".join(paths)

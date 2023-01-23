@@ -1,4 +1,3 @@
-import re
 from dataclasses import dataclass
 from typing import Iterator
 
@@ -31,9 +30,7 @@ class Moocs(Iniad):
 
     def course(self, url: str) -> Course:
         u = MoocsURL(url)
-        if u.year is None or u.course is None:
-            raise ValueError("Invalid URL")
-        prefix = "/courses/" + u.year + "/" + u.course
+        prefix = u.prefix("course")
         url = self.path + prefix
         response = self.session.get(url)
         if response.url != url:

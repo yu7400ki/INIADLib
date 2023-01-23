@@ -1,4 +1,3 @@
-import re
 from dataclasses import dataclass
 from typing import Iterator
 
@@ -24,34 +23,27 @@ class Lecture:
         response = self.session.get(self.url)
         soup = BeautifulSoup(response.text, "html.parser")
         pages_el = list(soup.select("ul.pagination > li"))[1:-1]
+        course = self.course
+        group = self.group
         lecture = self.name
 
         for page_el in pages_el:
             prefix = page_el.select_one("a")["href"]
             if prefix == "#":
                 url = response.url
-                prefix = re.search(r"/courses/\d{4}/\w{2}\d{3}/.+/.+", url).group()
-            yield Page(lecture, prefix, self.session)
+                u = MoocsURL(url)
+                prefix = u.prefix("page")
+            yield Page(course, group, lecture, prefix, self.session)
 
     def page(self, url: str) -> Page:
         u = MoocsURL(url)
-        if u.year is None or u.course is None or u.lecture is None or u.page is None:
-            raise ValueError("Invalid URL")
-        prefix = "/courses/" + u.year + "/" + u.course + "/" + u.lecture + "/" + u.page
+        prefix = u.prefix("page")
         url = self.path + prefix
         response = self.session.get(url)
         if response.url != url:
             raise ValueError("Invalid URL")
 
-        return Page(self.name, prefix, self.session)
-
-    def reload(self) -> None:
-        response = self.session.get(self.url)
-        soup = BeautifulSoup(response.text, "html.parser")
-        breadcrumb = list(soup.select("ol.breadcrumb > li"))
-        self.course = breadcrumb[1].text
-        self.group = breadcrumb[2].text
-        self.name = breadcrumb[3].text
+        return Page(self.course, self.group, self.name, prefix, self.session)
 
     @property
     def url(self) -> str:
